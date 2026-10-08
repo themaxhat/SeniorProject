@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Welcome</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- History button (top left) -->
+  <button id="history-btn" class="icon-btn history-btn" type="button" aria-label="Show history" aria-controls="history" aria-expanded="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 12a9 9 0 1 0 3-6.7"/>
+      <path d="M3 4v5h5"/>
+      <path d="M12 7.5V12l3 2"/>
+    </svg>
+  </button>
+
+  <!-- History drawer -->
+  <div id="backdrop" class="backdrop"></div>
+  <aside id="history" class="drawer" aria-label="History" inert>
+    <header class="drawer-head">
+      <h2>History</h2>
+      <button id="history-close" class="icon-btn" type="button" aria-label="Close history">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6 6 18"/>
+        </svg>
+      </button>
+    </header>
+
+    <ul id="history-list" class="history-list"></ul>
+
+    <footer class="drawer-foot">
+      <button id="edit-btn" class="btn" type="button">Edit</button>
+      <button id="clear-btn" class="btn btn-danger" type="button">Clear all history</button>
+    </footer>
+  </aside>
+
+  <main>
+    <h1>Welcome, XYZ</h1>
+
+    <div class="composer">
+      <input id="message" type="text" placeholder="Ask anything" aria-label="Message" autocomplete="off">
+
+      <!-- TEMPORARY: delete this button (and its code in script.js) once audio is verified -->
+      <button id="speaker" class="icon-btn" type="button" aria-label="Test speaker">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M11 5 6 9H3v6h3l5 4V5z"/>
+          <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+          <path d="M18.5 5.5a9 9 0 0 1 0 13"/>
+        </svg>
+      </button>
+
+      <button id="mic" class="icon-btn" type="button" aria-label="Use microphone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="3" width="6" height="12" rx="3"/>
+          <path d="M5 11a7 7 0 0 0 14 0"/>
+          <path d="M12 18v3"/>
+        </svg>
+      </button>
+    </div>
+
+    <p id="status" class="status" aria-live="polite"></p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
