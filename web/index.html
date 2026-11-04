@@ -3,69 +3,143 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Welcome</title>
+  <title>AI Counselor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <!-- History button (top left) -->
-  <button id="history-btn" class="icon-btn history-btn" type="button" aria-label="Show history" aria-controls="history" aria-expanded="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M3 12a9 9 0 1 0 3-6.7"/>
-      <path d="M3 4v5h5"/>
-      <path d="M12 7.5V12l3 2"/>
-    </svg>
-  </button>
+<body data-mic-locked="false">
 
-  <!-- History drawer -->
+  <div id="app" class="app">
+
+    <!-- ============ Chat panel (left) ============ -->
+    <aside id="chat-panel" class="chat-panel" aria-label="Conversation">
+      <div class="chat-inner">
+        <header class="chat-head">
+          <button id="history-btn" class="icon-btn" type="button"
+                  aria-label="Show history" aria-controls="history" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+          </button>
+          <div class="chat-head-actions">
+            <button id="new-chat" class="icon-btn" type="button" aria-label="Start a new chat">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+            <button id="chat-collapse" class="icon-btn" type="button" aria-label="Minimize chat">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m11 17-5-5 5-5M18 17l-5-5 5-5"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <div id="thread" class="thread" role="log" aria-label="Messages"></div>
+
+        <div class="chat-compose">
+          <input id="message" type="text" placeholder="Ask me anything via text…"
+                 aria-label="Type a message and press Enter to send"
+                 autocomplete="off" enterkeyhint="send">
+        </div>
+      </div>
+    </aside>
+
+    <!-- Drag to resize (mouse, touch, or Left/Right arrow keys) -->
+    <div id="resizer" class="resizer" role="separator" aria-orientation="vertical"
+         aria-label="Resize chat panel" aria-controls="chat-panel"
+         aria-valuemin="15" aria-valuemax="60" aria-valuenow="30" tabindex="0"></div>
+
+    <!-- Mobile only: tap outside the chat panel to close it -->
+    <div id="chat-scrim" class="chat-scrim"></div>
+
+    <!-- ============ Stage (right) ============ -->
+    <section id="stage" class="stage" aria-label="Talk">
+      <div class="topbar">
+        <button id="chat-toggle" class="icon-btn" type="button"
+                aria-label="Open chat" aria-controls="chat-panel" aria-expanded="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </button>
+
+        <div class="top-actions">
+          <button id="bg-btn" class="icon-btn" type="button"
+                  aria-label="Change background" aria-expanded="false" aria-controls="bg-panel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+          </button>
+
+          <button id="mic-lock" class="icon-btn mic-lock" type="button" role="switch" aria-checked="true"
+                  aria-label="Allow microphone in this app"
+                  title="Microphone is on. Select to turn it off for this app.">
+            <svg class="icon-mic-on" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/></svg>
+            <svg class="icon-mic-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 9.3V5a3 3 0 0 0-5.9-.8M9 9v2a3 3 0 0 0 5.1 2.1M19 10v1a7 7 0 0 1-1.1 3.8M5 10v1a7 7 0 0 0 11.3 5.5M12 18v4M2 2l20 20"/></svg>
+          </button>
+
+          <button id="profile-btn" class="icon-btn" type="button" aria-disabled="true"
+                  aria-label="Account and settings (coming soon)" title="Account and settings (coming soon)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/></svg>
+          </button>
+        </div>
+
+        <div id="bg-panel" class="popover" role="dialog" aria-label="Background" hidden>
+          <p class="pop-title">Background</p>
+          <div id="bg-swatches" class="swatches"></div>
+          <label class="color-row">
+            <span>Custom color</span>
+            <input id="bg-color" type="color" value="#d9d9d9">
+          </label>
+          <div class="pop-actions">
+            <button id="bg-upload" class="btn" type="button">Upload image</button>
+            <button id="bg-reset" class="btn" type="button">Reset</button>
+          </div>
+          <input id="bg-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+          <p id="bg-note" class="pop-note" role="status">Your background is saved on this device only.</p>
+        </div>
+      </div>
+
+      <main class="stage-main" data-user-name="Michael">
+        <h1 id="greeting" class="greeting">Hello Michael</h1>
+
+        <button id="mic" class="orb" type="button" aria-pressed="false" aria-label="Start recording">
+          <img src="orb.png" alt="" width="300" height="300" draggable="false">
+        </button>
+
+        <div id="transcript" class="transcript is-placeholder">Live transcription of my response, click the icon to tell me anything…</div>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </main>
+
+      <footer class="stage-foot">
+        <p>Your chats and recordings are saved on this device only. This isn’t a substitute for professional or emergency care.
+          <a href="https://988lifeline.org" target="_blank" rel="noopener">Need urgent help? Call or text 988 (US)</a></p>
+      </footer>
+    </section>
+  </div>
+
+  <!-- ============ History drawer ============ -->
   <div id="backdrop" class="backdrop"></div>
-  <aside id="history" class="drawer" aria-label="History" inert>
+  <aside id="history" class="drawer" aria-label="History" aria-hidden="true" inert>
     <header class="drawer-head">
       <h2>History</h2>
-      <button id="history-close" class="icon-btn" type="button" aria-label="Close history">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-          <path d="M6 6l12 12M18 6 6 18"/>
-        </svg>
-      </button>
+      <div class="drawer-head-actions">
+        <button id="export-btn" class="icon-btn" type="button" aria-label="Export history as a file" title="Export history">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        </button>
+        <button id="history-close" class="icon-btn" type="button" aria-label="Close history">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
     </header>
 
-    <ul id="history-list" class="history-list"></ul>
+    <div class="tabs" role="tablist" aria-label="History type">
+      <button id="tab-chats" class="tab" type="button" role="tab" aria-selected="true" aria-controls="history-list">Chats</button>
+      <button id="tab-recordings" class="tab" type="button" role="tab" aria-selected="false" aria-controls="history-list">Recordings</button>
+    </div>
 
+    <ul id="history-list" class="history-list" role="tabpanel"></ul>
+
+    <p id="drawer-note" class="drawer-note" role="status"></p>
     <footer class="drawer-foot">
       <button id="edit-btn" class="btn" type="button">Edit</button>
       <button id="clear-btn" class="btn btn-danger" type="button">Clear all history</button>
     </footer>
   </aside>
 
-  <main>
-    <h1>Welcome, XYZ</h1>
-
-    <div class="composer">
-      <input id="message" type="text" placeholder="Ask anything" aria-label="Message" autocomplete="off">
-
-      <!-- TEMPORARY: delete this button (and its code in script.js) once audio is verified -->
-      <button id="speaker" class="icon-btn" type="button" aria-label="Test speaker">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M11 5 6 9H3v6h3l5 4V5z"/>
-          <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
-          <path d="M18.5 5.5a9 9 0 0 1 0 13"/>
-        </svg>
-      </button>
-
-      <button id="mic" class="icon-btn" type="button" aria-label="Use microphone">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <rect x="9" y="3" width="6" height="12" rx="3"/>
-          <path d="M5 11a7 7 0 0 0 14 0"/>
-          <path d="M12 18v3"/>
-        </svg>
-      </button>
-    </div>
-
-    <p id="status" class="status" aria-live="polite"></p>
-  </main>
-
+  <script src="ui.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
